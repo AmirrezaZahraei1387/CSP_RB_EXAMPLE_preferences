@@ -8,6 +8,7 @@ class RBModel:
     the RB model is used to generate CSP instances under
     the control of difficulty to solve the CSP model.
     """
+
     def __init__(self, varCount: int, tightness: float, alpha: float, rCon: float, np: int):
 
         self.__varCount = varCount
@@ -69,7 +70,8 @@ class RBModel:
             v_dependencies = list(random.sample(self.__variables, k=random.randint(0, self.__np)))
             try:
                 v_dependencies.remove(v)
-            except ValueError: pass
+            except ValueError:
+                pass
             dependencies.update({v: v_dependencies})
 
         return dependencies
@@ -80,10 +82,10 @@ class RBModel:
 
         for variable in self.__dependencies:
             depend_num = len(self.__dependencies[variable])
-            comb = list(itertools.combinations(self.__domain, depend_num))
-
+            comb = list(itertools.product(self.__domain, repeat=depend_num))
+            cp_tables.update({variable: {}})
             for val in comb:
-                cp_tables.update({(variable, val): random.sample(self.__domain, len(self.__domain))})
+                cp_tables[variable].update({val: random.sample(self.__domain, len(self.__domain))})
 
         return cp_tables
 
@@ -100,7 +102,7 @@ class RBModel:
 
         print("constraints: ")
         for variables in self.__constraints:
-            print(variables,":", self.__constraints[variables])
+            print(variables, ":", self.__constraints[variables])
 
         print("dependencies: ")
         for variable in self.__dependencies:
@@ -108,16 +110,14 @@ class RBModel:
 
         print("cp_tables: ")
         for variable in self.__cp_tables:
-            print(variable[0], ":")
+            print(variable, ":")
 
-            print(variable[1], ":", end='')
+            for val, pref in self.__cp_tables[variable].items():
+                print(val, ": ", end="")
 
-            for i in range(len(self.__cp_tables[variable]) - 1, -1, -1):
-                if i == 0:
-                    print(self.__cp_tables[variable][i], end="")
-                else:
-                    print(self.__cp_tables[variable][i], '> ', end="")
-            print()
-
-
+                for i in range(len(pref) - 1, -1, -1):
+                    if i == 0:
+                        print(pref[i])
+                    else:
+                        print(pref[i], "> ", end="")
 
