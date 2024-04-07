@@ -9,7 +9,7 @@ def runAlgorithm(func, k: int):
     print("***answers are in the order of most preferred to least preferred***")
     for result in results:
         print("answer: ", result)
-    print("take took: {}".format(end - start))
+    print("time took: {}".format(end - start))
 
 
 def main():
